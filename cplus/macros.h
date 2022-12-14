@@ -1,4 +1,3 @@
-#include <etl/result.h>
 
 // based on oktal's macros https://github.com/oktal/result
 
@@ -18,3 +17,4 @@
             return res.error();                     \
         }                                           \
     })                                              \
+

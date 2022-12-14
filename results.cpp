@@ -11,9 +11,12 @@
 *
 * They are harder to debug, bloat the code (They add their
 * entire handler) and create an impact on performance (roughly 5-15%)
+*
+* fun fact - results are a core part of the rust language
 */
 
 #include <cstdio>
+#include <etl/result.h>
 #include "cplus/macros.h"
 
 // I've declared to clear the usage of result
