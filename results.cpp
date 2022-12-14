@@ -17,7 +17,7 @@
 
 #include <cstdio>
 #include <etl/result.h>
-#include "cplus/macros.h"
+#include "macros.h"
 
 // I've declared to clear the usage of result
 using value_t = int;

@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This repository contains a collection of c++ best practices I gather over time.
+This repository contains a collection of c++ best practices I gather over time. It can be easily and contains a single header (macros.h)
 
 The term **C+** refers to the usage of c++ in a way that produces the same code as C. This kind of behavior makes compiling to embedded devices much easier and increases performance.
 

@@ -1,5 +1,7 @@
 
-// based on oktal's macros https://github.com/oktal/result
+
+// .: Result Macros :.
+// based on oktal's result macros https://github.com/oktal/result
 
 #define TRY(statement)                              \
     ({                                              \
@@ -17,4 +19,18 @@
             return res.error();                     \
         }                                           \
     })                                              \
+
+// .: Template Interface Macros :. 
+
+#define METHOD(lhs, name, rhs)  \
+ {                              \
+ lhs (T::*_a_)rhs = &T::name;   \
+ _a_;                           \
+ }                              \
+
+
+#define INTERFACE(interface_name)                   \
+    interface_name() { void (*p)() = Constraints; } \
+    static void Constraints()                       \
+
 

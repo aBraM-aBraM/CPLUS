@@ -28,21 +28,45 @@
 #include <etl/variant.h>
 #include <etl/array.h>
 #include <cstdio>
+#include "macros.h"
 
 // based on Bjarne Stroustrup in his C++ Style and Technique FAQ,
 // crediting Alex Stepanov and Jeremy Siek for the use of pointer to function
+
+
+
+
 
 template<typename T>
 class ICompressable
 {
 public:
-  static void Constraints()
-  {
-    T* (T::*test)() const = &T::compress;
-    test; // suppress warnings about unused variables
-  }
-  ICompressable() { void (*p)() = Constraints; }
+    INTERFACE(ICompressable)
+    {
+        METHOD(T*,compress,() const);
+    }
+    
 };
+
+// the macros expand the class in the following way:
+// these macros expand to this:
+    /*
+template<typename T>
+class ICompressable {
+    public:
+    ICompressable() {
+        void(*p)() = Constraints; // makes sure constraints is evaluated
+        static void Constraints()
+        {
+            // start of RTYPE_NAME_CONST expansion
+            {
+                T* (T::*_a_)() const = &T::compress; // makes sure compress exists at the given signature
+                _a_; // remove unused variable warnings;
+            }
+        }
+    }
+};
+*/
 
 // template inheritance declaration
 class Zip: public ICompressable<Zip>
