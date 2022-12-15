@@ -12,3 +12,5 @@ add_executable(results examples/results.cpp)
 
 add_executable(traits examples/traits.cpp)
 target_compile_features(traits PRIVATE cxx_std_14)
+
+add_executable(mocks examples/mocks.cpp)
