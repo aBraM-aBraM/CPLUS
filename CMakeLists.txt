@@ -8,7 +8,7 @@ add_subdirectory(etl)
 link_libraries(etl)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-add_executable(results results.cpp)
+add_executable(results examples/results.cpp)
 
-add_executable(traits traits.cpp)
+add_executable(traits examples/traits.cpp)
 target_compile_features(traits PRIVATE cxx_std_14)
