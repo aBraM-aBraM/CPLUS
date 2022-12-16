@@ -3,6 +3,7 @@
 #include "include/mocks.h"
 
 #include <etl/type_traits.h>
+#include <etl/optional.h>
 
 // wip
 
@@ -12,7 +13,7 @@ class ICompressable
 public:
     INTERFACE(ICompressable)
     {
-        METHOD(void ,compress,());
+        METHOD(int ,compress,());
     }
 };
 
@@ -31,18 +32,25 @@ class MockCompress : public ICompressable<MockCompress>
         printf("hooked!\n"); // hooks would be used for mocking
     }
 
+    
     struct compress_struct_t {
-        void operator()()
+        int operator()()
         {
-            call_count++;
-            ((*this).*_func_)();    
+            m_call_count++; 
+            return m_ret_val;
         }
-        decltype(&compress_struct_t::operator()) _func_;
-        size_t call_count = 0;
+        using return_t = decltype(((compress_struct_t*)nullptr)->operator()());
+        void set_return(return_t value) {m_ret_val = value;}
+        size_t get_call_count() {return m_call_count;}
+        bool was_called() {return m_call_count > 0;}
+        private:
+        size_t m_call_count = 0;
+        return_t m_ret_val {};
+
     } compress_struct;
 
-    void compress() {
-        this->compress_struct.operator()();
+    int compress() {
+        return this->compress_struct.operator()();
     }
 };
 
@@ -50,9 +58,9 @@ class MockCompress : public ICompressable<MockCompress>
 int main()
 {
     MockCompress mock;
-    MockMethod(mock, compress)._func_ =  reinterpret_cast<decltype(MockMethod(mock, compress)._func_)>(&MockCompress::hook_compress);
-    mock.compress();
-    printf("call count: %d", MockMethod(mock, compress).call_count);
+    MockMethod(mock, compress).set_return(4);
+    printf("ret val: %d\n" , mock.compress());
+    printf("call count: %d\n", MockMethod(mock, compress).get_call_count());
 
     return 0;
 }
