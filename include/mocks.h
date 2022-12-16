@@ -6,7 +6,7 @@
 template <typename FuncType, typename ReturnType>
 struct MockMetadata
 {
-    FuncType _func_ = nullptr;
+    FuncType func = nullptr;
     size_t m_call_count = 0;
     ReturnType m_ret_val{};
 };
@@ -20,9 +20,9 @@ using InstanceMetaMap = etl::unordered_map<size_t, MockMetadata<FuncType, Return
         static lhs func(const name##Func *obj)                                                     \
         {                                                                                          \
             obj->meta->m_call_count++;                                                             \
-            if (nullptr != obj->meta->_func_)                                                      \
+            if (nullptr != obj->meta->func)                                                        \
             {                                                                                      \
-                return obj->meta->_func_();                                                        \
+                return obj->meta->func();                                                          \
             }                                                                                      \
             return obj->meta->m_ret_val;                                                           \
         }                                                                                          \
@@ -32,11 +32,11 @@ using InstanceMetaMap = etl::unordered_map<size_t, MockMetadata<FuncType, Return
         template <typename GenericFunc>                                                            \
         void hook(GenericFunc hook_function)                                                       \
         {                                                                                          \
-            meta->_func_ = reinterpret_cast<FuncType>(hook_function);                              \
+            meta->func = reinterpret_cast<FuncType>(hook_function);                                \
         }                                                                                          \
         void unhook()                                                                              \
         {                                                                                          \
-            meta->_func_ = nullptr;                                                                \
+            meta->func = nullptr;                                                                  \
         }                                                                                          \
         void set_return(ReturnType value)                                                          \
         {                                                                                          \
