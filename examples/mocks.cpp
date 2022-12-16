@@ -27,30 +27,41 @@ class MockCompress : public ICompressable<MockCompress>
     {
 
     }
-    void hook_compress()
+    int hook_compress()
     {
         printf("hooked!\n"); // hooks would be used for mocking
+        return 0;
     }
 
     
-    struct compress_struct_t {
-        int operator()()
+    struct CompressStructType {
+        int func()
         {
             m_call_count++; 
+            if(nullptr != _func_) {
+                return ((*this).*_func_)();
+            }
             return m_ret_val;
         }
-        using return_t = decltype(((compress_struct_t*)nullptr)->operator()());
-        void set_return(return_t value) {m_ret_val = value;}
+        using ReturnType = decltype(((CompressStructType*)nullptr)->func());
+        using FuncType = decltype(&CompressStructType::func);
+
+        template<typename GenericFunc>
+        void hook(GenericFunc hook_function) {_func_ = reinterpret_cast<FuncType>(hook_function);}
+        void unhook() {_func_ = nullptr;}
+        void set_return(ReturnType value) {m_ret_val = value;}
         size_t get_call_count() {return m_call_count;}
         bool was_called() {return m_call_count > 0;}
+
         private:
+        FuncType _func_ = nullptr;
         size_t m_call_count = 0;
-        return_t m_ret_val {};
+        ReturnType m_ret_val {};
 
     } compress_struct;
 
     int compress() {
-        return this->compress_struct.operator()();
+        return this->compress_struct.func();
     }
 };
 
@@ -59,6 +70,11 @@ int main()
 {
     MockCompress mock;
     MockMethod(mock, compress).set_return(4);
+    MockMethod(mock, compress).hook(&MockCompress::hook_compress);
+    printf("ret val: %d\n" , mock.compress());
+    printf("call count: %d\n", MockMethod(mock, compress).get_call_count());
+
+    MockMethod(mock, compress).unhook();
     printf("ret val: %d\n" , mock.compress());
     printf("call count: %d\n", MockMethod(mock, compress).get_call_count());
 
