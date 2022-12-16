@@ -112,5 +112,10 @@ int main()
         // this beauty is only available in cpp14
         etl::visit([](auto& compressable){compressable.compress();}, c);
     }
+
+    // output:
+    // Zip compress!
+    // TarGZ compress!
+    
     return 0;
 }

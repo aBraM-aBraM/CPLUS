@@ -69,5 +69,9 @@ int main() {
         return inc_result.error();
     }
 
+    // output:
+    // sum: 6
+    // error, isn't natural
+
     return 0;
 }

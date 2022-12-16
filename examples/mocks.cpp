@@ -1,6 +1,6 @@
 /*
  * This is my implementation of mocking
- * using trait interfaces, uncoupled to any standard library
+ * using trait interfaces, heapless using etl
  */
 #include <cstdio>
 #include "include/macros.h"
@@ -54,18 +54,20 @@ int main()
 
     // return value is the last set return value
     MockMethod(mock1, compress).unhook();
-    printf("ret val: %d\n", mock1.compress());
-    printf("call count: %d\n\n", MockMethod(mock1, compress).get_call_count());
+    printf("ret val: %d\n", mock1.compress()); // ret val: 4
+    printf("call count: %d\n\n", MockMethod(mock1, compress).get_call_count()); // call count: 1
 
     // return value is the value returned by the hooking function
     MockMethod(mock1, compress).hook(&hook_compress2);
-    printf("ret val: %d\n", mock1.compress());
-    printf("call count: %d\n\n", MockMethod(mock1, compress).get_call_count());
+    printf("ret val: %d\n", mock1.compress()); // hooked2!
+                                               // ret val: 0 
+    printf("call count: %d\n\n", MockMethod(mock1, compress).get_call_count()); // call count: 2
 
     // hook with member function
     MockMethod(mock1, compress).hook(&MockCompress::hook_compress);
-    printf("ret val: %d\n", mock1.compress());
-    printf("call count: %d\n\n", MockMethod(mock1, compress).get_call_count());
+    printf("ret val: %d\n", mock1.compress()); // hooked!
+                                               // ret val: 0
+    printf("call count: %d\n\n", MockMethod(mock1, compress).get_call_count()); // call count: 3
 
     // different mocks instance store different metadata
     MockCompress mock2;
@@ -73,19 +75,19 @@ int main()
     MockMethod(mock1, compress).set_return(1);
     MockMethod(mock2, compress).set_return(2);
 
-    printf("ret val1: %d\n", mock1.compress());
-    printf("ret val2: %d\n\n", mock2.compress());
+    printf("ret val1: %d\n", mock1.compress());   // ret val1: 1
+    printf("ret val2: %d\n\n", mock2.compress()); // ret val2: 2
 
-    printf("call count1: %d\n", MockMethod(mock1, compress).get_call_count());
-    printf("call count2: %d\n\n", MockMethod(mock2, compress).get_call_count());
+    printf("call count1: %d\n", MockMethod(mock1, compress).get_call_count());   // call count1: 4
+    printf("call count2: %d\n\n", MockMethod(mock2, compress).get_call_count()); // call count2: 1
 
     MockMethod(mock1, get_str).set_return("Hello ");
     MockMethod(mock2, get_str).set_return("World!");
 
-    printf("%s %s\n\n", mock1.get_str(), mock2.get_str());
+    printf("%s %s\n\n", mock1.get_str(), mock2.get_str()); // Hello  World!
 
-    printf("call count1: %d\n", MockMethod(mock1, get_str).was_called());
-    printf("call count2: %d\n", MockMethod(mock2, get_str).get_call_count());
+    printf("call count1: %d\n", MockMethod(mock1, get_str).was_called());     // call count1: 1
+    printf("call count2: %d\n", MockMethod(mock2, get_str).get_call_count()); // call count2: 1
 
     return 0;
 }
