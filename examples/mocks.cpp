@@ -1,6 +1,9 @@
 /*
  * This is my implementation of mocking
- * using trait interfaces, heapless using etl
+ * using trait interfaces, heapless 
+ * 
+ * this implementation has a very loose coupling with etl::hash
+ * which can be easily replaced
  */
 #include <cstdio>
 #include "include/macros.h"
@@ -14,6 +17,7 @@ public:
     {
         METHOD(int, compress, () const);
         METHOD(char *, get_str, (char*));
+        METHOD(void, void_func, ());
     }
 };
 
@@ -29,6 +33,7 @@ public:
     // creates a mock for the given method (args are deduced)
     CREATE_MOCK_METHOD(int, compress, const); // int compress(args) const
     CREATE_MOCK_METHOD(char*, get_str,); // char* get_str(args)
+    CREATE_MOCK_METHOD_VOID(__attribute__ ((aligned (16))), void_func,); // void __attribute__ ((aligned (16))) void_func(args)
 
     // behind the scenes CREATE_MOCK_METHOD creates an unordered_map for
     // meta data. The size of this map can be evaluated in the following manner:

@@ -35,6 +35,14 @@ struct MockMetadata
     ReturnType m_ret_val{};
 };
 
+template<typename FuncType>
+struct MockMetadata<FuncType, void>
+{
+    FuncType func = nullptr;
+    size_t m_call_count = 0;
+    size_t m_last_params_hash = 0;
+};
+
 #define CREATE_MOCK_METHOD(lhs, name, rhs)                                      \
     struct name##Func                                                           \
     {                                                                           \
@@ -97,4 +105,62 @@ struct MockMetadata
     lhs name(Args... args) rhs                                                  \
     {                                                                           \
         return this->m_##name.func(&m_##name, hash(args...));                   \
+    }                                                                           \
+
+
+
+#define CREATE_MOCK_METHOD_VOID(lhs, name, rhs)                                 \
+    struct name##Func                                                           \
+    {                                                                           \
+        static void lhs func(const name##Func *obj, size_t params_hash)         \
+        {                                                                       \
+            obj->meta.m_last_params_hash = params_hash;                         \
+            obj->meta.m_call_count++;                                           \
+            if (nullptr != obj->meta.func)                                      \
+            {                                                                   \
+                obj->meta.func();                                               \
+            }                                                                   \
+        }                                                                       \
+        using FuncType = void (*)();                                            \
+                                                                                \                                                                                
+        template <typename GenericFunc>                                         \
+        void hook(GenericFunc hook_function)                                    \
+        {                                                                       \
+            meta.func = reinterpret_cast<FuncType>(hook_function);              \
+        }                                                                       \
+        void unhook()                                                           \
+        {                                                                       \
+            meta.func = nullptr;                                                \
+        }                                                                       \
+        size_t get_call_count() const                                           \
+        {                                                                       \
+            return meta.m_call_count;                                           \
+        }                                                                       \
+        bool was_called() const                                                 \
+        {                                                                       \
+            return meta.m_call_count > 0;                                       \
+        }                                                                       \
+                                                                                \
+        /* returns true if args are the last arguments the mock was             \
+        called with */                                                          \
+        template <typename... Args>                                             \
+        bool called_using(Args... args)                                         \
+        {                                                                       \
+            return was_called() && hash(args...) == meta.m_last_params_hash;    \
+        }                                                                       \
+                                                                                \
+        static size_t _get_map_size()                                           \
+        {                                                                       \
+            return sizeof(meta);                                                \
+        }                                                                       \
+                                                                                \
+    private:                                                                    \
+        mutable MockMetadata<FuncType, void> meta;                              \
+    } m_##name;                                                                 \
+                                                                                \
+    template <typename... Args>                                                 \                                                                                
+    void lhs name(Args... args) rhs                                             \
+    {                                                                           \
+        this->m_##name.func(&m_##name, hash(args...));                          \
     }
+    
