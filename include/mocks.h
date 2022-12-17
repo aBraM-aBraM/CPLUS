@@ -1,6 +1,10 @@
 #include <etl/hash.h>
+#include <etl/variant.h>
 
 #define MockMethod(mock, method) mock.m_##method
+
+#define MockName(variant) Mock##variant
+#define Variant(name, ...) class MockName(name); using name = etl::variant<MockName(name), __VA_ARGS__>;
 
 template <typename T>
 size_t hash(const T &v)
@@ -43,15 +47,26 @@ struct MockMetadata<FuncType, void>
     size_t m_last_params_hash = 0;
 };
 
+
 #define CREATE_MOCK_METHOD(lhs, name, rhs)                                      \
     struct name##Func                                                           \
     {                                                                           \
+    \
+        name##Func() = default; \
+        name##Func(const name##Func& other)\
+        {\
+            printf("ctor\n"); \
+            meta = other.meta;\
+            printf("my: %d, other: %d\n", meta.func, other.meta.func);\
+        }\
+\
         static lhs func(const name##Func *obj, size_t params_hash)              \
         {                                                                       \
             obj->meta.m_last_params_hash = params_hash;                         \
             obj->meta.m_call_count++;                                           \
             if (nullptr != obj->meta.func)                                      \
             {                                                                   \
+                printf("boutta call %d\n", obj->meta.func);                     \
                 return obj->meta.func();                                        \
             }                                                                   \
             return obj->meta.m_ret_val;                                         \
@@ -104,6 +119,7 @@ struct MockMetadata<FuncType, void>
     template <typename... Args>                                                 \
     lhs name(Args... args) rhs                                                  \
     {                                                                           \
+        printf("this& = %d\n" , &this->m_##name);\
         return this->m_##name.func(&m_##name, hash(args...));                   \
     }                                                                           \
 
