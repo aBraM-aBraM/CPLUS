@@ -30,12 +30,11 @@ public:
         printf("hooked!\n");
         return 0;
     }
-    static const int INSTANCE_COUNT = 2;
     // creates a mock for the given method
-    CREATE_MOCK_METHOD(int, compress, () const, INSTANCE_COUNT);
-    CREATE_MOCK_METHOD(char*, get_str, (), INSTANCE_COUNT);
+    CREATE_MOCK_METHOD(int, compress, () const);
+    CREATE_MOCK_METHOD(char*, get_str, ());
 
-    // behind the scenes CREATE_MOCK_METHOD creates a static unordered_map for
+    // behind the scenes CREATE_MOCK_METHOD creates an unordered_map for
     // meta data. The size of this map can be evaluated in the following manner:
     const size_t size = MockCompress::compressFunc::_get_map_size();
 };
