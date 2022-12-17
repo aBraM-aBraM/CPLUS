@@ -59,7 +59,7 @@ struct MockMetadata<FuncType, void>
         using ReturnType = decltype(((name##Func *)nullptr)->func(nullptr, 0)); \
         using FuncType = ReturnType (*)();                                      \
                                                                                 \
-                                                                                \                                                                                
+                                                                                \
         template <typename GenericFunc>                                         \
         void hook(GenericFunc hook_function)                                    \
         {                                                                       \
@@ -101,7 +101,7 @@ struct MockMetadata<FuncType, void>
         mutable MockMetadata<FuncType, ReturnType> meta;                        \
     } m_##name;                                                                 \
                                                                                 \
-    template <typename... Args>                                                 \                                                                                
+    template <typename... Args>                                                 \
     lhs name(Args... args) rhs                                                  \
     {                                                                           \
         return this->m_##name.func(&m_##name, hash(args...));                   \
@@ -122,7 +122,7 @@ struct MockMetadata<FuncType, void>
             }                                                                   \
         }                                                                       \
         using FuncType = void (*)();                                            \
-                                                                                \                                                                                
+                                                                                \
         template <typename GenericFunc>                                         \
         void hook(GenericFunc hook_function)                                    \
         {                                                                       \
@@ -158,7 +158,7 @@ struct MockMetadata<FuncType, void>
         mutable MockMetadata<FuncType, void> meta;                              \
     } m_##name;                                                                 \
                                                                                 \
-    template <typename... Args>                                                 \                                                                                
+    template <typename... Args>                                                 \
     void lhs name(Args... args) rhs                                             \
     {                                                                           \
         this->m_##name.func(&m_##name, hash(args...));                          \

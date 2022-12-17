@@ -16,7 +16,7 @@ public:
     INTERFACE(ICompressable)
     {
         METHOD(int, compress, () const);
-        METHOD(char *, get_str, (char*));
+        METHOD(const char *, get_str, (char*));
         METHOD(void, void_func, ());
     }
 };
@@ -32,7 +32,7 @@ public:
     }
     // creates a mock for the given method (args are deduced)
     CREATE_MOCK_METHOD(int, compress, const); // int compress(args) const
-    CREATE_MOCK_METHOD(char*, get_str,); // char* get_str(args)
+    CREATE_MOCK_METHOD(const char*, get_str,); // char* get_str(args)
     CREATE_MOCK_METHOD_VOID(__attribute__ ((aligned (16))), void_func,); // void __attribute__ ((aligned (16))) void_func(args)
 
     // behind the scenes CREATE_MOCK_METHOD creates an unordered_map for
@@ -45,7 +45,6 @@ int hook_compress2()
     printf("hooked2!\n");
     return 0;
 }
-
 
 int main()
 {
