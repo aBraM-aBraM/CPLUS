@@ -11,3 +11,10 @@ The c++ standard library is not consistent with allocations and exception usages
 
 ## Examples (format)
 [Examples](./examples) for each concept exist in their own .cpp file with comments explaining the motives, advantages and disadvantages for the usages.
+
+## Extra Credits
+This is a list of people who contributed and helped me improve this
+without going through the gitty proccess.
+
+* [BrainStackOverflow](https://github.com/BrainStackOverFlow)
+* [KuperGit](https://github.com/Kupercraft)
